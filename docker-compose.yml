@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  repository:
+    container_name: parcelo-repository
+    build:
+      context: ./
+      dockerfile: ./repository/Dockerfile
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8081
+      - REPOSITORY_API_KEY=likeawhileloopwithnoescape
+    volumes:
+      - gradle-cache:/root/.gradle/caches
+      - local-bin:/usr/local/bin
+  console:
+    container_name: parcelo-console
+    build:
+      context: ./
+      dockerfile: ./console/Dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+      - BASE_URL=http://0.0.0.0:8000
+      - REPOSITORY_URL=http://0.0.0.0:8081
+      - REPOSITORY_API_KEY=likeawhileloopwithnoescape
+      - GITHUB_OAUTH2_CLIENT_ID=a2461ceb67739354fcf6
+      - GITHUB_OAUTH2_CLIENT_SECRET=216e19603af8a725708eabc6897ef594d788db7b
+      - GITHUB_OAUTH2_REDIRECT_URL=http://0.0.0.0:8080/auth/github/callback
+      - DEBUG_USER_GITHUB_ID=140034595
+      - DEBUG_USER_EMAIL=offhand@fastmail.net
+      - DEBUG_USER_REVIEWER_EMAIL=offhand@fastmail.net
+      - DEBUG_USER_SESSION_ID=foobar
+    volumes:
+      - gradle-cache:/root/.gradle/caches
+      - local-bin:/usr/local/bin
+
+volumes:
+  gradle-cache:
+  local-bin:
